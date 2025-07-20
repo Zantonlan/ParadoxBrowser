@@ -1,6 +1,9 @@
 #include <windows.h>
 #include <stdio.h>
 
+#include "paradox.h"
+#include "htmlparser.h"
+
 int screenWidth;
 int screenHeight;
 
@@ -13,7 +16,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 			HDC hdc = BeginPaint(hwnd, &ps);
 
 			SetBkMode(hdc, TRANSPARENT);
-			TextOut(hdc, 510, 260, "Test", strlen("Test"));
+			//TextOut(hdc, 510, 260, "Test", strlen("Test"));
 
 			EndPaint(hwnd, &ps);
 			return 0;
@@ -37,6 +40,16 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 }
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdShow) {
+	//make console window
+	AllocConsole();
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+	//freopen("log.txt", "w", stdout);
+	//freopen("log.txt", "w", stderr);
+
+	printf("Console initialized.\n\n");
+	fflush(stdout);
+	
 	WNDCLASSEX wc = {0};
 	HWND hwnd;
 	MSG msg;
@@ -61,6 +74,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdSh
 		NULL, NULL, hInst, NULL);
 
 	if (!hwnd) return 0;
+
+	char* filename = "test.html";
+	printf("%s\n", filename);
+	fflush(stdout);
+	Tag* topTag = createTagTree(filename);
 
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
