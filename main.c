@@ -48,7 +48,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdSh
 	//freopen("log.txt", "w", stderr);
 
 	printf("Console initialized.\n\n");
-	fflush(stdout);
 	
 	WNDCLASSEX wc = {0};
 	HWND hwnd;
