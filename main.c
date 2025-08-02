@@ -42,10 +42,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nCmdShow) {
 	//make console window
 	AllocConsole();
-	freopen("CONOUT$", "w", stdout);
-	freopen("CONOUT$", "w", stderr);
-	//freopen("log.txt", "w", stdout);
-	//freopen("log.txt", "w", stderr);
+	//freopen("CONOUT$", "w", stdout);
+	//freopen("CONOUT$", "w", stderr);
+	freopen("log.txt", "w", stdout);
+	freopen("log.txt", "w", stderr);
 
 	printf("Console initialized.\n\n");
 	

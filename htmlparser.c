@@ -37,7 +37,7 @@ Attribute* createAttribute(const char* name, const char* value) {
 
 void addChild(Tag* parent, Tag* child) {
 	Tag** temp = realloc(parent->children, (parent->numOfChildren+1)*sizeof(Tag*));
-	if (temp == NULL) {fprintf(stderr, "Failed memory reallocation whilst attempting to add a child.\n"); exit(1);}
+	if (temp == NULL) {fprintf(stderr, "Failed memory reallocation whilst attempting to add a child.\n"); fflush(stderr); exit(1);}
 	
 	parent->children = temp;
 	parent->children[parent->numOfChildren] = child;
@@ -49,7 +49,7 @@ void addChild(Tag* parent, Tag* child) {
 void addAttribute(Attribute*** table, int* numOfAttributes, Attribute* attrToAdd) {
 	Attribute** temp;
 	temp = realloc(*table, (*numOfAttributes+1)*sizeof(Attribute*));
-	if (temp == NULL) {fprintf(stderr, "Failed memory reallocation whilst attempting to add an attribute.\n"); exit(1);}
+	if (temp == NULL) {fprintf(stderr, "Failed memory reallocation whilst attempting to add an attribute.\n"); fflush(stderr); exit(1);}
 
 	*table = temp;
 	*table[*numOfAttributes] = attrToAdd;
@@ -59,6 +59,7 @@ void addAttribute(Attribute*** table, int* numOfAttributes, Attribute* attrToAdd
 Tag* createTagTree(const char* filename) {
 	Tag* topTag = createTag("TOP");
 	printf("%s\nlmnop\n", filename);
+	fflush(stdout);
 	char* file = readfile(filename);
 	
 
@@ -91,11 +92,53 @@ Tag* createTagTree(const char* filename) {
 
 	while (file[idx] != '\0') {
 		printf("%c", file[idx]);
+		fflush(stdout);
 		
 		switch(file[idx]) {
 			case '<':
 			{
 				if (makingTextTag) {
+					//printf("%s", tagType);
+
+					if (attributeName != NULL) {
+						//printf("%s", attributeName);
+					}
+
+					if (attributeValue != NULL) {
+						//printf("%s", attributeValue);
+					}
+
+					Tag* newTag = createTag(tagType);
+					printf("a");
+					fflush(stdout);
+					Attribute** tagAttributes = malloc(sizeof(Attribute*)*numberOfAttributes);
+					printf("b");
+					fflush(stdout);
+					memcpy(tagAttributes, attributes, sizeof(Attribute*)*numberOfAttributes);
+					printf("c");
+					fflush(stdout);
+					newTag->attributes = tagAttributes;
+					printf("d");
+					fflush(stdout);
+					newTag->numOfAttributes = numberOfAttributes;
+					printf("e");
+					fflush(stdout);
+
+					free(tagType);
+					tagType = NULL;
+					tagTypeLen = 0;
+					free(attributeName);
+					attributeName = NULL;
+					attrNameLen = 0;
+					free(attributeValue);
+					attributeValue = NULL;
+					attrValLen = 0;
+					numberOfAttributes = 0;
+					inAttrVal = false;
+					free(attributes);
+					attributes = NULL;
+					
+					/*
 					char* tempPtr = realloc(attributeValue, attrValLen+1);
 					attributeValue = tempPtr;
 					attributeValue[attrValLen] = '\0';
@@ -111,24 +154,27 @@ Tag* createTagTree(const char* filename) {
 					memcpy(tagAttributes, attributes, sizeof(Attribute*)*numberOfAttributes);
 					newTag->attributes = tagAttributes;
 					newTag->numOfAttributes = numberOfAttributes;
-				}
 
-				tagType = NULL;
-				tagType = realloc(tagType, 0);
-				tagTypeLen = 0;
-				attributeName = NULL;
-				attributeName = realloc(attributeName, 0);
-				attrNameLen = 0;
-				attributeValue = NULL;
-				attributeValue = realloc(attributeValue, 0);
-				attrValLen = 0;
-				numberOfAttributes = 0;
-				inAttrVal = false;
-				attributes = NULL;
-				attributes = realloc(attributes, 0);
+					free(tagType);
+					tagType = NULL;
+					tagTypeLen = 0;
+					free(attributeName);
+					attributeName = NULL;
+					attrNameLen = 0;
+					free(attributeValue);
+					attributeValue = NULL;
+					attrValLen = 0;
+					numberOfAttributes = 0;
+					inAttrVal = false;
+					free(attributes);
+					attributes = NULL;
+					*/
+				}
 
 				inTagDef = true;
 				currMode = "name";
+				printf("It's a name");
+				fflush(stdout);
 				break;
 			}
 			case '/':
@@ -173,19 +219,19 @@ Tag* createTagTree(const char* filename) {
 				}
 
 				//reset tag stuff
+				free(tagType);
 				tagType = NULL;
-				tagType = realloc(tagType, 0);
 				tagTypeLen = 0;
+				free(attributeName);
 				attributeName = NULL;
-				attributeName = realloc(attributeName, 0);
 				attrNameLen = 0;
+				free(attributeValue);
 				attributeValue = NULL;
-				attributeValue = realloc(attributeValue, 0);
 				attrValLen = 0;
 				numberOfAttributes = 0;
 				inAttrVal = false;
+				free(attributes);
 				attributes = NULL;
-				attributes = realloc(attributes, 0);
 
 				closingTag = false;
 
@@ -250,25 +296,24 @@ Tag* createTagTree(const char* filename) {
 				}
 			}
 		} else if (!inTagDef && file[idx] != '>') {
-			if (!makingTextTag && file[idx] != '\n') {
+			if (!makingTextTag && file[idx] != '\n' && file[idx] != '\t') {
 				makingTextTag = true;
-				char* temp = realloc(tagType, strlen("TEXT"));
-				tagType = temp;
 				tagType = "TEXT";
 				tagTypeLen = strlen("TEXT");
-				temp = realloc(attributeName, strlen("CONTENTS"));
-				attributeName = temp;
 				attributeName = "CONTENTS";
 				attrNameLen = strlen("CONTENTS");
 				numberOfAttributes = 1;
 			}
-
+			
+			/*
 			if (makingTextTag) {
 				char* tempPtr = realloc(attributeValue, attrValLen+1);
 				attributeValue = tempPtr;
 				attributeValue[attrValLen] = file[idx];
 				attrValLen++;
 			}
+
+			*/
 		}
 	
 		idx++;
